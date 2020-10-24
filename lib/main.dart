@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import 'scene/splash_screen/splash_screen.dart';
+
 final pawnProvider = Provider((_) => 'Welcome to the real world');
 
 void main() {
@@ -18,13 +20,9 @@ class MyApp extends HookWidget {
     final String value = useProvider(pawnProvider);
 
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('useProvider')),
-        body: Center(
-          child: Text(value),
-        ),
-      ),
+      home: SplashScreen(),
     );
+
   }
 }
 
