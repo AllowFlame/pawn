@@ -1,10 +1,28 @@
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
-class BleService {
-  BleManager _bleManager = BleManager();
-  List<BleDeviceItem> deviceList = [];
+typedef CheckPermission = Future<void> Function();
+// _checkPermissions() async {
+//   if (Platform.isAndroid) {
+//     if (await Permission.contacts.request().isGranted) {
+//     }
+//     Map<Permission, PermissionStatus> statuses = await [
+//       Permission.location
+//     ].request();
+//     print(statuses[Permission.location]);
+//   }
+// }
 
-  /*
+class BleService {
+  BleManager _bleManager;
+  List<BleDeviceItem> _deviceList;
+  CheckPermission _checkPermissions;
+
+  BleService(CheckPermission checkPermission) {
+    _bleManager = BleManager();
+    _deviceList = [];
+    _checkPermissions = checkPermission;
+  }
+
   void init() async {
     await _bleManager.createClient(
         restoreStateIdentifier: "example-restore-state-identifier",
@@ -19,53 +37,31 @@ class BleService {
     //.then((_) => _waitForBluetoothPoweredOn())
   }
 
-  //스캔 ON/OFF
-  void scan() async {
-    if(!_isScanning) {
-      deviceList.clear();
-      _bleManager.startPeripheralScan().listen((scanResult) {
-        // 페리페럴 항목에 이름이 있으면 그걸 사용하고
-        // 없다면 어드버타이지먼트 데이터의 이름을 사용하고 그것 마져 없다면 Unknown으로 표시
-        var name = scanResult.peripheral.name ?? scanResult.advertisementData.localName ?? "Unknown";
-        /*
-        // 여러가지 정보 확인
-        print("Scanned Name ${name}, RSSI ${scanResult.rssi}");
-        print("\tidentifier(mac) ${scanResult.peripheral.identifier}"); //mac address
-        print("\tservice UUID : ${scanResult.advertisementData.serviceUuids}");
-        print("\tmanufacture Data : ${scanResult.advertisementData.manufacturerData}");
-        print("\tTx Power Level : ${scanResult.advertisementData.txPowerLevel}");
-        print("\t${scanResult.peripheral}");
-        */
-        //이미 검색된 장치인지 확인 mac 주소로 확인
-        var findDevice = deviceList.any((element) {
-          if(element.peripheral.identifier == scanResult.peripheral.identifier)
-          {
-            //이미 존재하면 기존 값을 갱신.
-            element.peripheral = scanResult.peripheral;
-            element.advertisementData = scanResult.advertisementData;
-            element.rssi = scanResult.rssi;
-            return true;
-          }
-          return false;
-        });
-        //처음 발견된 장치라면 devicelist에 추가
-        if(!findDevice) {
-          deviceList.add(BleDeviceItem(name, scanResult.rssi, scanResult.peripheral, scanResult.advertisementData));
+  void doScan() async {
+    _deviceList.clear();
+    _bleManager.startPeripheralScan().listen((ScanResult result) {
+      var name = result.peripheral.name ?? result.advertisementData.localName ?? "Unknown";
+      var foundDevice = _deviceList.any((element) {
+        if (element.peripheral.identifier == result.peripheral.identifier) {
+          element.peripheral = result.peripheral;
+          element.advertisementData = result.advertisementData;
+          element.rssi = result.rssi;
+          return true;
         }
-        //갱긴 적용.
-        setState((){});
+        return false;
       });
-      //스캔중으로 변수 변경
-      setState(() { _isScanning = true; });
-    }
-    else {
-      //스캔중이었다면 스캔 정지
-      _bleManager.stopPeripheralScan();
-      setState(() { _isScanning = false; });
-    }
+
+      if (!foundDevice) {
+        _deviceList.add(BleDeviceItem(name,result.rssi, result.peripheral, result.advertisementData));
+      }
+    });
   }
 
-   */
+  void stopScan() async {
+    _bleManager.stopPeripheralScan();
+  }
+
+  
 }
 
 class BleDeviceItem {
