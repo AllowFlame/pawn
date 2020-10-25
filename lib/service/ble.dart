@@ -61,7 +61,9 @@ class BleService {
     _bleManager.stopPeripheralScan();
   }
 
-  
+  List<BleDeviceItem> get devices {
+    return _deviceList;
+  }
 }
 
 class BleDeviceItem {
