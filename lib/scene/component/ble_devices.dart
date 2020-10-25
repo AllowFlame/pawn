@@ -28,5 +28,34 @@ class BleDevicesWidget extends HookWidget {
       service.init();
 
     }, const []);
+
+
+    list() {
+      var deviceList = service.devices;
+      return ListView.builder(
+        itemCount: deviceList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            //디바이스 이름과 맥주소 그리고 신호 세기를 표시한다.
+            title: Text(deviceList[index].deviceName),
+            subtitle: Text(deviceList[index].peripheral.identifier),
+            trailing: Text("${deviceList[index].rssi}"),
+          );
+        },
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ble scan'),
+    ),
+    body: Center(
+    child: list(),
+    ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: service.doScan,
+        child: Icon(Icons.bluetooth_searching),
+      ),
+    );
   }
 }
