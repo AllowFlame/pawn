@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 typedef CheckPermission = Future<void> Function();
@@ -16,11 +17,15 @@ class BleService {
   BleManager _bleManager;
   List<BleDeviceItem> _deviceList;
   CheckPermission _checkPermissions;
+  ValueNotifier<bool> _isScanning;
+  ValueNotifier<List<BleDeviceItem>> _devices;
 
-  BleService(CheckPermission checkPermission) {
+  BleService(CheckPermission checkPermission, ValueNotifier<bool> isScanning, ValueNotifier<List<BleDeviceItem>> devices) {
     _bleManager = BleManager();
     _deviceList = [];
     _checkPermissions = checkPermission;
+    _isScanning = isScanning;
+    _devices = devices;
   }
 
   void init() async {
@@ -38,6 +43,7 @@ class BleService {
   }
 
   void doScan() async {
+    // _isScanning.value = true;
     _deviceList.clear();
     _bleManager.startPeripheralScan().listen((ScanResult result) {
       var name = result.peripheral.name ?? result.advertisementData.localName ?? "Unknown";
@@ -54,7 +60,9 @@ class BleService {
       if (!foundDevice) {
         _deviceList.add(BleDeviceItem(name,result.rssi, result.peripheral, result.advertisementData));
       }
+      _devices.value = _deviceList;
     });
+    _isScanning.value = false;
   }
 
   void stopScan() async {

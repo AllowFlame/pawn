@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:pawn/scene/component/ble_devices.dart';
 
 import 'scene/splash_screen/splash_screen.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends HookWidget {
     final String value = useProvider(pawnProvider);
 
     return MaterialApp(
-      home: SplashScreen(),
+      home: BleDevicesWidget(),
     );
 
   }
