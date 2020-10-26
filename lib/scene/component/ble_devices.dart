@@ -10,6 +10,7 @@ class BleDevicesWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isScanning = useState<bool>(false);
+    final devices = useState<List<BleDeviceItem>>([]);
 
     _checkPermissions() async {
       if (Platform.isAndroid) {
@@ -22,16 +23,16 @@ class BleDevicesWidget extends HookWidget {
       }
     }
 
-    BleService service;
+    BleService service = BleService(_checkPermissions, isScanning, devices);
     useEffect(() {
-      service = BleService(_checkPermissions);
+      // service = BleService(_checkPermissions, isScanning);
       service.init();
-
+      return null;
     }, const []);
 
 
     list() {
-      var deviceList = service.devices;
+      var deviceList = devices.value;
       return ListView.builder(
         itemCount: deviceList.length,
         itemBuilder: (context, index) {
