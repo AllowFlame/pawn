@@ -28,6 +28,7 @@ dependencies:
 
   flutter_ble_lib: ^2.2.3
   permission_handler: ^5.0.0+hotfix.3
+  flutter_speed_dial: ^1.2.5
 
 dev_dependencies:
   flutter_test:
