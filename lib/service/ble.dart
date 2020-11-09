@@ -75,23 +75,23 @@ class BleService {
         .listen((PeripheralConnectionState connectionState) {
       switch (connectionState) {
         case PeripheralConnectionState.connected: {
-
+          print('connected');
         }
         break;
         case PeripheralConnectionState.connecting: {
-
+          print('connecting');
         }
         break;
         case PeripheralConnectionState.disconnected: {
-
+          print('disconnected');
         }
         break;
         case PeripheralConnectionState.disconnecting: {
-
+          print('disconnecting');
         }
         break;
         default: {
-
+          print('default');
         }
         break;
       }
@@ -100,10 +100,12 @@ class BleService {
     await peripheral.connect().then((_) {
       peripheral.discoverAllServicesAndCharacteristics().then((_) => peripheral.services())
           .then((services) async {
+            print('services');
             for (var service in services) {
+              print('service');
               List<Characteristic> characteristics = await service.characteristics();
-              for (var caracteristic in characteristics) {
-
+              for (var characteristic in characteristics) {
+                print('characteristic : $characteristic');
               }
             }
       });

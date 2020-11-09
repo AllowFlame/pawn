@@ -38,11 +38,17 @@ class BleDevicesWidget extends HookWidget {
       return ListView.builder(
         itemCount: deviceList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            //디바이스 이름과 맥주소 그리고 신호 세기를 표시한다.
-            title: Text('${index} : ${deviceList[index].deviceName}'),
-            subtitle: Text(deviceList[index].peripheral.identifier),
-            trailing: Text("${deviceList[index].rssi}"),
+          return GestureDetector(
+            child: ListTile(
+              //디바이스 이름과 맥주소 그리고 신호 세기를 표시한다.
+              title: Text('$index : ${deviceList[index].deviceName}'),
+              subtitle: Text(deviceList[index].peripheral.identifier),
+              trailing: Text("${deviceList[index].rssi}"),
+            ),
+            onTap: () {
+              print('onTap: $index');
+              service.connect(deviceList[index].peripheral);
+            },
           );
         },
       );
