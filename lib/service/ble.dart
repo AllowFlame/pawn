@@ -39,7 +39,6 @@ class BleService {
         .catchError((e) => print("Couldn't create BLE client  $e"))
         .then((_) => _checkPermissions()) //BLE 생성 후 퍼미션 체크
         .catchError((e) => print("Permission check error $e"));
-    //.then((_) => _waitForBluetoothPoweredOn())
   }
 
   void doScan() async {
@@ -57,7 +56,7 @@ class BleService {
       });
 
       if (!foundDevice) {
-        _deviceList.add(BleDeviceItem(name,result.rssi, result.peripheral, result.advertisementData));
+        _deviceList.add(BleDeviceItem(name, result.rssi, result.peripheral, result.advertisementData));
       }
       _devices.value = _deviceList;
     });
@@ -97,19 +96,32 @@ class BleService {
       }
     });
 
-    await peripheral.connect().then((_) {
-      peripheral.discoverAllServicesAndCharacteristics().then((_) => peripheral.services())
-          .then((services) async {
-            print('services');
-            for (var service in services) {
-              print('service');
-              List<Characteristic> characteristics = await service.characteristics();
-              for (var characteristic in characteristics) {
-                print('characteristic : $characteristic');
-              }
+    try {
+      if (await peripheral.isConnected()) {
+        print('peripheral.isConnected');
+        await peripheral.disconnectOrCancelConnection();
+      }
+      await peripheral.connect().then((_) {
+        peripheral.discoverAllServicesAndCharacteristics().then((_) => peripheral.services())
+            .then((services) async {
+          print('services');
+          for (var service in services) {
+            print('service');
+            List<Characteristic> characteristics = await service.characteristics();
+            for (var characteristic in characteristics) {
+              print('characteristic : $characteristic');
             }
+          }
+        });
       });
-    });
+    } on BleError catch (e) {
+      print("BleError caught: ${e.errorCode.value} ${e.reason}");
+    } catch (e) {
+      if (e is Error) {
+        debugPrintStack(stackTrace: e.stackTrace);
+      }
+      print("${e.runtimeType}: $e");
+    }
   }
 
 

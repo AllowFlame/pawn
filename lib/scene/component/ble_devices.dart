@@ -27,7 +27,6 @@ class BleDevicesWidget extends HookWidget {
 
     BleService service = BleService(_checkPermissions, isScanning, devices);
     useEffect(() {
-      // service = BleService(_checkPermissions, isScanning);
       service.init();
       return null;
     }, const []);
