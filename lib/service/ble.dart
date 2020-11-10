@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
@@ -50,7 +52,7 @@ class BleService {
       // if (!foundDevice) {
       //   _deviceList.add(BleDeviceItem(name, result.rssi, result.peripheral, result.advertisementData));
       // }
-      _devices.value = _deviceList.toList(growable: false);
+      _devices.value = _deviceList.entries.map((element) => element.value).toList(growable: false);
     });
     _isScanning.value = false;
   }
@@ -106,6 +108,8 @@ class BleService {
             List<Characteristic> characteristics = await service.characteristics();
             for (var characteristic in characteristics) {
               print('characteristic : $characteristic');
+              Uint8List packet = await characteristic.read();
+              print('packet : $packet');
             }
           }
         });
@@ -124,8 +128,8 @@ class BleService {
     await peripheral.disconnectOrCancelConnection();
   }
 
-  Set<BleDeviceItem> get devices {
-    return _deviceList;
+  List<BleDeviceItem> get devices {
+    return _deviceList.entries.map((element) => element.value).toList(growable: false);
   }
 }
 
