@@ -87,14 +87,14 @@ class BleDevicesWidget extends HookWidget {
           SpeedDialChild(
               child: Icon(Icons.bluetooth_searching),
               backgroundColor: Colors.red,
-              label: 'First',
+              label: 'Do Scan',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () => service.doScan()
           ),
           SpeedDialChild(
             child: Icon(Icons.bluetooth_disabled),
             backgroundColor: Colors.blue,
-            label: 'Second',
+            label: 'Stop Scan',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => service.stopScan(),
           ),
