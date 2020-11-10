@@ -27,7 +27,6 @@ class BleDevicesWidget extends HookWidget {
 
     BleService service = BleService(_checkPermissions, isScanning, devices);
     useEffect(() {
-      // service = BleService(_checkPermissions, isScanning);
       service.init();
       return null;
     }, const []);
@@ -38,11 +37,17 @@ class BleDevicesWidget extends HookWidget {
       return ListView.builder(
         itemCount: deviceList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            //디바이스 이름과 맥주소 그리고 신호 세기를 표시한다.
-            title: Text('${index} : ${deviceList[index].deviceName}'),
-            subtitle: Text(deviceList[index].peripheral.identifier),
-            trailing: Text("${deviceList[index].rssi}"),
+          return GestureDetector(
+            child: ListTile(
+              //디바이스 이름과 맥주소 그리고 신호 세기를 표시한다.
+              title: Text('$index : ${deviceList[index].deviceName}'),
+              subtitle: Text(deviceList[index].peripheral.identifier),
+              trailing: Text("${deviceList[index].rssi}"),
+            ),
+            onTap: () {
+              print('onTap: $index');
+              service.connect(deviceList[index].peripheral);
+            },
           );
         },
       );
@@ -82,14 +87,14 @@ class BleDevicesWidget extends HookWidget {
           SpeedDialChild(
               child: Icon(Icons.bluetooth_searching),
               backgroundColor: Colors.red,
-              label: 'First',
+              label: 'Do Scan',
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () => service.doScan()
           ),
           SpeedDialChild(
             child: Icon(Icons.bluetooth_disabled),
             backgroundColor: Colors.blue,
-            label: 'Second',
+            label: 'Stop Scan',
             labelStyle: TextStyle(fontSize: 18.0),
             onTap: () => service.stopScan(),
           ),
