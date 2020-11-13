@@ -31,6 +31,14 @@ class BleDevicesWidget extends HookWidget {
       return null;
     }, const []);
 
+    disconnectAll() async {
+      for (var device in devices.value) {
+        var peripheral = device.peripheral;
+        if (await peripheral.isConnected()) {
+          service.disconnect(peripheral);
+        }
+      }
+    }
 
     list() {
       var deviceList = devices.value;
@@ -101,9 +109,9 @@ class BleDevicesWidget extends HookWidget {
           SpeedDialChild(
             child: Icon(Icons.keyboard_voice),
             backgroundColor: Colors.green,
-            label: 'Third',
+            label: 'disconnect all',
             labelStyle: TextStyle(fontSize: 18.0),
-            onTap: () => print('THIRD CHILD'),
+            onTap: () => disconnectAll(),
           ),
         ],
       ),
