@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -55,6 +57,30 @@ class BleDevicesWidget extends HookWidget {
             onTap: () {
               print('onTap: $index');
               service.connect(deviceList[index].peripheral);
+            },
+            onLongPress: () async {
+              const String UART_SERVICE_UUID = "F85F0001-D185-4380-B71D-702B7013A77E";
+              const String UART_RX_CHARACTERISTIC_UUID = "F85F0002-D185-4380-B71D-702B7013A77E";
+              const String UART_TX_CHARACTERISTIC_UUID = "F85F0003-D185-4380-B71D-702B7013A77E";
+
+              const String UUID_SERVICE = "0000ff01-0000-1000-8000-00805f9b34fb";
+              const String C_UUID_READ = "0000ff06-0000-1000-8000-00805f9b34fb";
+              const String C_UUID_WRITE = "0000ff05-0000-1000-8000-00805f9b34fb";
+
+              List<int> v = List();
+              v.add(0x02);
+              v.add(0x01);
+              v.add(0x10);
+              v.add(0x11);
+              Uint8List getVersion = Uint8List.fromList(v);
+              print("send msg");
+              try {
+                await deviceList[index].peripheral.writeCharacteristic(UUID_SERVICE, C_UUID_WRITE, getVersion, false);
+                deviceList[index].peripheral.s
+              } catch (e) {
+                print("error : $e");
+              }
+
             },
           );
         },
